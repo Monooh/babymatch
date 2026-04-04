@@ -13,7 +13,7 @@ function GenderBadge({ gender }) {
 
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
       padding: '4px 12px', borderRadius: 20,
       background: cfg.bg, color: cfg.color,
       fontFamily: "'Inter',system-ui", fontSize: 11, fontWeight: 700,
