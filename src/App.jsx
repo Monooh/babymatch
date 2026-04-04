@@ -8,6 +8,37 @@ import Matches from './pages/Matches'
 import Likes from './pages/Likes'
 import './index.css'
 
+// SVG icons — gris inactivo, color activo
+const IconFilters = ({ active }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#8B2020' : '#B0A0A0'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+    <line x1="11" y1="18" x2="13" y2="18"/>
+  </svg>
+)
+
+const IconSwipe = ({ active }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? '#8B2020' : 'none'} stroke={active ? '#8B2020' : '#B0A0A0'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+  </svg>
+)
+
+const IconLikes = ({ active }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? '#2E9954' : 'none'} stroke={active ? '#2E9954' : '#B0A0A0'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
+    <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+  </svg>
+)
+
+const IconMatches = ({ active }) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#C4830A' : '#B0A0A0'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </svg>
+)
+
 export default function App() {
   const [session, setSession]       = useState(null)
   const [coupleId, setCoupleId]     = useState(null)
@@ -71,8 +102,11 @@ export default function App() {
           Baby<span style={{ color:'#8B2020' }}>Match</span>
         </div>
         <div style={{ position:'relative' }}>
-          <button onClick={() => setShowMenu(m => !m)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:22, padding:4 }}>
-            👤
+          <button onClick={() => setShowMenu(m => !m)} style={{ background:'none', border:'none', cursor:'pointer', padding:4, display:'flex', alignItems:'center' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B0A0A0" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
           </button>
           {showMenu && (
             <div style={{ position:'absolute', right:0, top:'100%', marginTop:4, background:'#fff', borderRadius:14, border:'1px solid #EDEBE9', boxShadow:'0 8px 24px rgba(0,0,0,0.12)', minWidth:220, zIndex:100, overflow:'hidden' }}>
@@ -89,7 +123,8 @@ export default function App() {
                 </>
               )}
               <button onClick={handleSignOut} style={{ width:'100%', padding:'12px 16px', background:'none', border:'none', borderTop:'1px solid #EDEBE9', cursor:'pointer', fontFamily:"'Inter',system-ui", fontSize:14, color:'#8B2020', textAlign:'left', display:'flex', alignItems:'center', gap:8, fontWeight:700 }}>
-                🚪 Cerrar sesión
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B2020" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Cerrar sesión
               </button>
             </div>
           )}
@@ -104,24 +139,29 @@ export default function App() {
       {page === 'likes'   && <Likes session={session} coupleId={coupleId} />}
       {page === 'matches' && <Matches session={session} coupleId={coupleId} />}
 
-      {/* Bottom nav — now 4 items */}
-      <nav className="bottom-nav">
-        <button className={`nav-btn ${page==='filters'?'active':''}`} onClick={() => setPage('filters')}>
-          <span style={{ fontSize:18 }}>⚙️</span>
-          <span className="nav-label">Filtros</span>
+      {/* Bottom nav — SVG icons */}
+      <nav style={{ background:'#fff', borderTop:'1px solid #EDEBE9', display:'flex', padding:'10px 0 18px', position:'sticky', bottom:0, zIndex:10 }}>
+
+        <button onClick={() => setPage('filters')} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, border:'none', background:'none', cursor:'pointer', padding:'4px 0' }}>
+          <IconFilters active={page==='filters'} />
+          <span style={{ fontFamily:"'Inter',system-ui", fontSize:10, fontWeight: page==='filters' ? 700 : 400, color: page==='filters' ? '#8B2020' : '#B0A0A0' }}>Filtros</span>
         </button>
-        <button className={`nav-btn ${page==='swipe'?'active':''}`} onClick={() => setPage('swipe')}>
-          <span style={{ fontSize:18 }}>🌸</span>
-          <span className="nav-label">Swipe</span>
+
+        <button onClick={() => setPage('swipe')} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, border:'none', background:'none', cursor:'pointer', padding:'4px 0' }}>
+          <IconSwipe active={page==='swipe'} />
+          <span style={{ fontFamily:"'Inter',system-ui", fontSize:10, fontWeight: page==='swipe' ? 700 : 400, color: page==='swipe' ? '#8B2020' : '#B0A0A0' }}>Swipe</span>
         </button>
-        <button className={`nav-btn ${page==='likes'?'active':''}`} onClick={() => setPage('likes')}>
-          <span style={{ fontSize:18 }}>👍</span>
-          <span className="nav-label">Mis likes</span>
+
+        <button onClick={() => setPage('likes')} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, border:'none', background:'none', cursor:'pointer', padding:'4px 0' }}>
+          <IconLikes active={page==='likes'} />
+          <span style={{ fontFamily:"'Inter',system-ui", fontSize:10, fontWeight: page==='likes' ? 700 : 400, color: page==='likes' ? '#2E9954' : '#B0A0A0' }}>Mis likes</span>
         </button>
-        <button className={`nav-btn ${page==='matches'?'active':''}`} onClick={() => setPage('matches')}>
-          <span style={{ fontSize:18 }}>💖</span>
-          <span className="nav-label">Matches</span>
+
+        <button onClick={() => setPage('matches')} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4, border:'none', background:'none', cursor:'pointer', padding:'4px 0' }}>
+          <IconMatches active={page==='matches'} />
+          <span style={{ fontFamily:"'Inter',system-ui", fontSize:10, fontWeight: page==='matches' ? 700 : 400, color: page==='matches' ? '#C4830A' : '#B0A0A0' }}>Matches</span>
         </button>
+
       </nav>
     </div>
   )
