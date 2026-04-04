@@ -203,3 +203,12 @@ body {
   padding: 0;
   line-height: 1;
 }
+
+/* iOS PWA safe areas */
+.app-shell {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav {
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
