@@ -13,7 +13,7 @@ function GenderBadge({ gender }) {
 
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+      display: 'inline-flex', alignItems: 'center', gap: 5,
       padding: '4px 12px', borderRadius: 20,
       background: cfg.bg, color: cfg.color,
       fontFamily: "'Inter',system-ui", fontSize: 11, fontWeight: 700,
@@ -341,7 +341,7 @@ export default function Swipe({ session, coupleId, filters }) {
               NOPE
             </div>
 
-            <GenderBadge gender={current.gender} />
+            <div style={{textAlign:"center"}}><GenderBadge gender={current.gender} /></div>
 
             <div style={{ fontFamily: "'Poppins',system-ui", fontSize: 54, fontWeight: 700, color: '#1A0E0E', lineHeight: 1, marginBottom: 8, letterSpacing: -1.5 }}>
               {current.name}
