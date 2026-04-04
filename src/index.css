@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --brand:       #3D1A1A;
+  --brand-mid:   #8B2020;
+  --rose:        #F7A9A8;
+  --rose-light:  #FDDCDC;
+  --beige:       #FFF4F1;
+  --beige-mid:   #FFE8E3;
+  --green:       #1A6B38;
+  --green-solid: #2E9954;
+  --green-dark:  #165C2E;
+  --red-light:   #FDEAEA;
+  --red-border:  #E09090;
+  --undo-bg:     #ECEAEA;
+  --undo-border: #C8C0C0;
+  --mint-light:  #DFF2E8;
+  --mint-text:   #145030;
+  --gray:        #EDEBE9;
+  --gray-mid:    #C8C4C2;
+  --text-dark:   #1A0E0E;
+  --text-mid:    #5A4040;
+  --text-light:  #9A8080;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #F0EBE8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* App shell — móvil centrado en desktop */
+.app-shell {
+  background: var(--beige);
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  box-shadow: 0 0 60px rgba(0,0,0,0.15);
+}
+
+@media (min-width: 500px) {
+  .app-shell {
+    border-radius: 36px;
+    max-height: 90vh;
+    min-height: 700px;
+  }
+}
+
+/* BUTTONS */
+.btn-primary {
+  display: block;
+  width: 100%;
+  background: var(--brand) !important;
+  color: #FFFFFF !important;
+  border: 2px solid var(--brand) !important;
+  border-radius: 14px;
+  padding: 15px 28px;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, transform 0.1s;
+  appearance: none;
+}
+.btn-primary:hover  { background: #2A1010 !important; }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-secondary {
+  display: block;
+  width: 100%;
+  background: #FFFFFF !important;
+  color: var(--brand) !important;
+  border: 2px solid var(--brand) !important;
+  border-radius: 14px;
+  padding: 13px 28px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  text-align: center;
+  transition: background 0.15s;
+  appearance: none;
+}
+.btn-secondary:hover { background: var(--beige) !important; }
+
+/* INPUTS */
+.input-field {
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid var(--gray-mid);
+  border-radius: 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--text-dark);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  margin-bottom: 12px;
+}
+.input-field:focus { border-color: var(--brand); }
+
+/* PILLS */
+.pill {
+  padding: 7px 15px;
+  border-radius: 20px;
+  border: 1.5px solid var(--gray-mid);
+  background: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.pill:hover  { border-color: var(--brand); color: var(--brand); }
+.pill.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  background: #fff;
+  border-top: 1px solid var(--gray);
+  display: flex;
+  padding: 10px 0 16px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: opacity 0.15s;
+}
+.nav-btn:hover { opacity: 0.7; }
+.nav-label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px;
+  color: var(--text-light);
+}
+.nav-btn.active .nav-label {
+  color: var(--brand-mid);
+  font-weight: 700;
+}
+
+/* SCREEN HEADER */
+.screen-header {
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid var(--gray);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.screen-header h2 {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.screen-header p {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-dark);
+  padding: 0;
+  line-height: 1;
+}
