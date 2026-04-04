@@ -109,7 +109,7 @@ export default function Swipe({ session, coupleId, filters }) {
       q = q.in('origin', filters.origin)
     }
 
-    const { data } = await q.order('popularity', { ascending: false }).limit(200)
+    const { data } = await q.order('popularity', { ascending: false }).limit(1000)
 
     let filtered = data || []
 
