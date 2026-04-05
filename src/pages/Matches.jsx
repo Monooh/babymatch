@@ -64,8 +64,8 @@ export default function Matches({ session, coupleId }) {
     <div style={{ display:'flex',flexDirection:'column',background:'#FFF4F1',flex:1,overflow:'hidden' }}>
       <div className="screen-header" style={{ justifyContent:'space-between', alignItems:'flex-start' }}>
         <div>
-          <h2>Vuestros Matches</h2>
-          <p>{filtered.length} de {matches.length} nombres en común</p>
+          <h2>Matches</h2>
+          <p>{filtered.length} de {matches.length} nombres</p>
         </div>
         {/* Gender filter pills */}
         <div style={{ display:'flex', gap:6, marginTop:2 }}>

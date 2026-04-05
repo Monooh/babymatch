@@ -11,12 +11,12 @@ const POP_MAP    = { 'Muy común':[70,100],'Moderado':[40,70],'Poco común':[15,
 
 function GenderBadge({ gender }) {
   const cfg = {
-    f:{ bg:'rgba(253,220,220,0.9)', color:'#7C2020', label:'Femenino' },
-    m:{ bg:'rgba(220,238,255,0.9)', color:'#1A3E80', label:'Masculino' },
-    u:{ bg:'rgba(223,242,232,0.9)', color:'#145030', label:'Unisex' },
-  }[gender] || { bg:'rgba(240,240,240,0.9)', color:'#555', label:gender }
+    f:{ bg:'#FDEAEA', color:'#7C2020', label:'Femenino' },
+    m:{ bg:'#DCEEFF', color:'#1A3E80', label:'Masculino' },
+    u:{ bg:'#DFF2E8', color:'#145030', label:'Unisex' },
+  }[gender] || { bg:'#F2F2F2', color:'#555', label:gender }
   return (
-    <span style={{ display:'inline-block', padding:'4px 14px', borderRadius:20, background:cfg.bg, color:cfg.color, fontFamily:"'Inter',system-ui", fontSize:12, fontWeight:700, lineHeight:'18px' }}>
+    <span style={{ display:'inline-block', padding:'5px 16px', borderRadius:20, background:cfg.bg, color:cfg.color, fontFamily:"'Inter',system-ui", fontSize:12, fontWeight:700, letterSpacing:.3 }}>
       {cfg.label}
     </span>
   )
@@ -90,39 +90,21 @@ export default function Swipe({ session, coupleId, filters }) {
     setLoading(false)
   }
 
-  // Save swipe to DB — returns the new swipe id
   async function saveSwipe(name, direction) {
-    // Always delete first to avoid unique constraint issues
     await supabase.from('swipes').delete()
-      .eq('user_id', session.user.id)
-      .eq('couple_id', coupleId)
-      .eq('name_id', name.id)
-
-    const { data: sw, error } = await supabase
-      .from('swipes')
+      .eq('user_id', session.user.id).eq('couple_id', coupleId).eq('name_id', name.id)
+    const { data: sw, error } = await supabase.from('swipes')
       .insert({ user_id: session.user.id, couple_id: coupleId, name_id: name.id, direction })
-      .select('id')
-      .single()
-
-    if (error) {
-      console.error('saveSwipe error:', error)
-      return null
-    }
-
-    // Check for match after like
+      .select('id').single()
+    if (error) { console.error('saveSwipe:', error); return null }
     if (direction === 'like') {
-      // Small delay to let the trigger run
-      await new Promise(r => setTimeout(r, 300))
-      const { data: m } = await supabase
-        .from('matches').select('id')
-        .eq('couple_id', coupleId).eq('name_id', name.id)
-        .single()
+      await new Promise(r => setTimeout(r, 200))
+      const { data: m } = await supabase.from('matches').select('id')
+        .eq('couple_id', coupleId).eq('name_id', name.id).single()
       if (m) setMatch(name)
     } else {
-      await supabase.from('matches').delete()
-        .eq('couple_id', coupleId).eq('name_id', name.id)
+      await supabase.from('matches').delete().eq('couple_id', coupleId).eq('name_id', name.id)
     }
-
     return sw?.id
   }
 
@@ -181,8 +163,7 @@ export default function Swipe({ session, coupleId, filters }) {
     if (last.swipeId) {
       await supabase.from('swipes').delete().eq('id', last.swipeId)
       if (last.direction === 'like') {
-        await supabase.from('matches').delete()
-          .eq('couple_id', coupleId).eq('name_id', last.nameId)
+        await supabase.from('matches').delete().eq('couple_id', coupleId).eq('name_id', last.nameId)
       }
     }
     historyRef.current = historyRef.current.slice(0,-1)
@@ -200,8 +181,8 @@ export default function Swipe({ session, coupleId, filters }) {
     else             { setLikeOp(0); setNopeOp(0) }
   }
   function endDrag(dx) {
-    if (dx > 80) swipeRight()
-    else if (dx < -80) swipeLeft()
+    if (dx>80) swipeRight()
+    else if (dx<-80) swipeLeft()
     else {
       const card = cardRef.current
       if (card) { card.style.transition='transform .22s'; card.style.transform=''; setTimeout(()=>{ if(card) card.style.transition='' },220) }
@@ -225,13 +206,14 @@ export default function Swipe({ session, coupleId, filters }) {
   const current   = names[index]
   const remaining = names.length - index
   const nameLen   = current?.name?.length || 0
-  const fontSize  = nameLen > 12 ? 28 : nameLen > 9 ? 36 : nameLen > 6 ? 44 : 54
+  // Bigger font for short names, scales down for long ones
+  const fontSize  = nameLen <= 4 ? 72 : nameLen <= 6 ? 62 : nameLen <= 8 ? 52 : nameLen <= 10 ? 42 : nameLen <= 12 ? 34 : 28
 
   return (
     <>
       {match && <MatchOverlay name={match} onContinue={()=>setMatch(null)} />}
 
-      {/* Counter + progress */}
+      {/* Counter */}
       <div style={{ padding:'10px 20px 8px',display:'flex',alignItems:'center',justifyContent:'flex-end',background:'#fff',borderBottom:'1px solid #EDEBE9',flexShrink:0 }}>
         <span style={{ fontFamily:"'Inter',system-ui",fontSize:13,color:'#9A8080',fontWeight:500 }}>
           {remaining > 0 ? `${remaining} nombres` : 'Sin más nombres'}
@@ -241,62 +223,72 @@ export default function Swipe({ session, coupleId, filters }) {
         <div style={{ height:'100%',background:'#8B2020',width:names.length?`${Math.round((index/names.length)*100)}%`:'0%',transition:'width .3s' }} />
       </div>
 
-      {/* Card area — Tinder-style, card takes most of screen */}
-      <div style={{ flex:1,display:'flex',flexDirection:'column',padding:'12px 16px 0',position:'relative',minHeight:0 }}>
+      {/* Card area */}
+      <div style={{ flex:1,padding:'12px 14px 0',position:'relative',display:'flex',flexDirection:'column',minHeight:0 }}>
 
-        {/* Shadow cards behind */}
+        {/* Shadow cards */}
         {remaining > 2 && (
-          <div style={{ position:'absolute',left:24,right:24,top:20,bottom:8,background:'#fff',borderRadius:20,border:'1px solid #E8E4E2',opacity:.35,transform:'scale(.94) translateY(8px)',zIndex:0 }} />
+          <div style={{ position:'absolute',left:22,right:22,top:20,bottom:0,background:'#fff',borderRadius:22,border:'1px solid #E5E0DE',opacity:.4,transform:'translateY(8px) scale(.94)',zIndex:0 }} />
         )}
         {remaining > 1 && (
-          <div style={{ position:'absolute',left:20,right:20,top:16,bottom:6,background:'#fff',borderRadius:20,border:'1px solid #E8E4E2',opacity:.65,transform:'scale(.97) translateY(4px)',zIndex:1 }} />
+          <div style={{ position:'absolute',left:18,right:18,top:16,bottom:0,background:'#fff',borderRadius:22,border:'1px solid #E5E0DE',opacity:.7,transform:'translateY(4px) scale(.97)',zIndex:1 }} />
         )}
 
         {current ? (
           <div ref={cardRef}
             style={{
               flex:1, position:'relative', zIndex:2,
-              background:'#fff', borderRadius:20,
+              background:'#fff', borderRadius:22,
               border:'1px solid #D8D4D2',
-              boxShadow:'0 4px 24px rgba(26,14,14,.10)',
+              boxShadow:'0 4px 24px rgba(26,14,14,.09)',
               cursor:'grab', userSelect:'none',
               display:'flex', flexDirection:'column',
-              padding:'24px 22px 20px',
               overflow:'hidden',
             }}
             onMouseDown={onMD}
             onMouseLeave={e=>{ if(isDragging.current){isDragging.current=false;endDrag(e.clientX-startX.current)} }}
             onTouchStart={onTS}
           >
-            {/* LIKE / NOPE labels */}
-            <div style={{ position:'absolute',top:20,right:16,padding:'6px 14px',borderRadius:10,fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:800,border:'3px solid #145030',color:'#145030',transform:'rotate(12deg)',opacity:likeOp,pointerEvents:'none',letterSpacing:1 }}>LIKE</div>
-            <div style={{ position:'absolute',top:20,left:16,padding:'6px 14px',borderRadius:10,fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:800,border:'3px solid #7C2020',color:'#7C2020',transform:'rotate(-12deg)',opacity:nopeOp,pointerEvents:'none',letterSpacing:1 }}>NOPE</div>
+            {/* LIKE / NOPE */}
+            <div style={{ position:'absolute',top:22,right:18,padding:'6px 16px',borderRadius:10,fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:800,border:'3px solid #145030',color:'#145030',transform:'rotate(12deg)',opacity:likeOp,pointerEvents:'none',letterSpacing:1 }}>LIKE</div>
+            <div style={{ position:'absolute',top:22,left:18,padding:'6px 16px',borderRadius:10,fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:800,border:'3px solid #7C2020',color:'#7C2020',transform:'rotate(-12deg)',opacity:nopeOp,pointerEvents:'none',letterSpacing:1 }}>NOPE</div>
 
-            {/* Card content — centered vertically */}
-            <div style={{ flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',gap:0 }}>
-              <div style={{ marginBottom:16 }}>
+            {/* Main content — vertically centered with generous spacing */}
+            <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px 24px', textAlign:'center', gap:0 }}>
+
+              {/* Badge */}
+              <div style={{ marginBottom:20 }}>
                 <GenderBadge gender={current.gender} />
               </div>
-              <div style={{ fontFamily:"'Poppins',system-ui",fontSize:fontSize,fontWeight:700,color:'#1A0E0E',lineHeight:1.05,marginBottom:8,letterSpacing:fontSize>40?-1.5:-0.5,wordBreak:'break-word',maxWidth:'100%' }}>
+
+              {/* Name — big and bold */}
+              <div style={{ fontFamily:"'Poppins',system-ui", fontSize:fontSize, fontWeight:700, color:'#1A0E0E', lineHeight:1, marginBottom:16, letterSpacing: fontSize > 50 ? -2 : fontSize > 35 ? -1 : -0.3, wordBreak:'break-word', maxWidth:'100%' }}>
                 {current.name}
               </div>
-              <div style={{ fontFamily:"'Inter',system-ui",fontSize:13,color:'#8B2020',fontWeight:700,letterSpacing:.3,marginBottom:14 }}>
+
+              {/* Origin */}
+              <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#8B2020', fontWeight:700, letterSpacing:.5, marginBottom:20, textTransform:'uppercase', fontSize:11 }}>
                 {current.origin}
               </div>
-              <div style={{ fontFamily:"'Inter',system-ui",fontSize:14,color:'#5A4040',lineHeight:1.6,padding:'0 8px',maxWidth:280 }}>
+
+              {/* Divider */}
+              <div style={{ width:40, height:2, background:'#F0EEEC', borderRadius:1, marginBottom:20 }} />
+
+              {/* Meaning */}
+              <div style={{ fontFamily:"'Inter',system-ui", fontSize:14, color:'#5A4040', lineHeight:1.65, maxWidth:280 }}>
                 {current.meaning}
               </div>
             </div>
 
-            {/* Bottom stats bar */}
-            <div style={{ borderTop:'1px solid #F0EEEC',paddingTop:14,display:'flex',justifyContent:'center',gap:24 }}>
-              <div style={{ display:'flex',alignItems:'center',gap:6,fontFamily:"'Inter',system-ui",fontSize:12,color:'#9A8080' }}>
+            {/* Stats bar — inside the card at the bottom */}
+            <div style={{ borderTop:'1px solid #F5F2F0', padding:'14px 24px', display:'flex', justifyContent:'center', gap:28, background:'#FDFCFC' }}>
+              <div style={{ display:'flex',alignItems:'center',gap:8,fontFamily:"'Inter',system-ui",fontSize:12,color:'#A09090' }}>
                 <span>Popularidad</span>
-                <div style={{ width:48,height:3,background:'#EDEBE9',borderRadius:2,overflow:'hidden' }}>
-                  <div style={{ height:'100%',background:'#8B2020',borderRadius:2,width:`${current.popularity}%` }} />
+                <div style={{ width:52,height:3,background:'#EDEBE9',borderRadius:2,overflow:'hidden' }}>
+                  <div style={{ height:'100%',background:'#C88080',borderRadius:2,width:`${current.popularity}%` }} />
                 </div>
               </div>
-              <div style={{ fontFamily:"'Inter',system-ui",fontSize:12,color:'#9A8080' }}>
+              <div style={{ fontFamily:"'Inter',system-ui",fontSize:12,color:'#A09090' }}>
                 {current.syllables} {current.syllables===1?'sílaba':'sílabas'}
               </div>
             </div>
@@ -310,9 +302,9 @@ export default function Swipe({ session, coupleId, filters }) {
         )}
       </div>
 
-      {/* Action buttons — with breathing room above nav */}
+      {/* Buttons — generous spacing above nav */}
       {current && (
-        <div style={{ display:'flex',justifyContent:'center',alignItems:'center',gap:20,padding:'20px 24px 24px',flexShrink:0 }}>
+        <div style={{ display:'flex',justifyContent:'center',alignItems:'center',gap:20,padding:'22px 24px 26px',flexShrink:0 }}>
           <button onClick={swipeLeft}
             style={{ width:64,height:64,borderRadius:'50%',border:'2px solid #EFAAAA',cursor:'pointer',background:'#FDEAEA',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 2px 12px rgba(200,80,80,.15)' }}>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C84040" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
