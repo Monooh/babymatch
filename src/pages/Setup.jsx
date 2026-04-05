@@ -72,6 +72,7 @@ export default function Setup({ session, onCouple }) {
       .eq('invite_code', joinCode.toUpperCase().trim())
       .eq('status', 'pending')
       .neq('user_a_id', session.user.id)
+      .is('user_b_id', null)
       .single()
     if (findError || !couple) {
       setError('Código no válido o ya utilizado.')
@@ -144,7 +145,7 @@ export default function Setup({ session, onCouple }) {
             <div style={{ fontFamily:"'Inter',system-ui", fontSize:11, color:'#9A7070', marginTop:8 }}>{copied ? '¡Copiado! 👍' : 'Toca para copiar'}</div>
           </div>
           <button className="btn-primary" onClick={shareCode}>📤 Compartir con mi pareja</button>
-          <button className="btn-secondary" onClick={handleContinueSolo}>Empezar solo por ahora</button>
+          <button className="btn-secondary" onClick={handleContinueSolo}>Empezar</button>
           <div style={{ fontFamily:"'Inter',system-ui", fontSize:12, color:'#9A7070', marginTop:12 }}>
             Tu pareja puede unirse después con este código
           </div>
