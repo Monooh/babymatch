@@ -65,7 +65,7 @@ export default function App() {
       .from('couples')
       .select('id, invite_code')
       .or(`user_a_id.eq.${uid},user_b_id.eq.${uid}`)
-      .eq('status', 'active')
+      .in('status', ['active','pending'])
       .single()
     if (data) { setCoupleId(data.id); setCoupleCode(data.invite_code) }
   }
@@ -97,7 +97,7 @@ export default function App() {
     <div className="app-shell">
 
       {/* Top bar */}
-      <div style={{ position:'sticky', top:0, zIndex:20, background:'#fff', borderBottom:'1px solid #EDEBE9', padding:'10px 20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+      <div style={{ position:'sticky', top:0, zIndex:20, background:'#fff', borderBottom:'1px solid #EDEBE9', paddingTop:'calc(10px + env(safe-area-inset-top))', paddingBottom:'10px', paddingLeft:'20px', paddingRight:'20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <div style={{ fontFamily:"'Poppins',system-ui", fontSize:16, fontWeight:700, color:'#1A0E0E' }}>
           Baby<span style={{ color:'#8B2020' }}>Match</span>
         </div>

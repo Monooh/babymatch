@@ -1,6 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
+
+const COLLECTION_TAG_MAP = {
+  'bíblico':       'bíblico',
+  'tendencia2025': 'popular',
+  'influencer':    'moderno',
+  'realeza':       'noble',
+  'naturaleza':    'naturaleza',
+  'mitológico':    'mitológico',
+  'cortisimos':    'minimalista',
+  'espiritual':    'espiritual',
+  'literario':     'literario',
+  'internacional': 'internacional',
+}
+
 const GENDER_MAP = { 'Niña': 'f', 'Niño': 'm', 'Unisex': 'u' }
 const POP_MAP    = { 'Muy común': [70,100], 'Moderado': [40,70], 'Poco común': [15,40], 'Raro': [0,15] }
 
@@ -126,6 +140,14 @@ export default function Swipe({ session, coupleId, filters }) {
       const styleLower = filters.style.map(s => s.toLowerCase().replace(' / ', '/'))
       filtered = filtered.filter(n =>
         n.style_tags?.some(tag => styleLower.some(s => tag.includes(s.split('/')[0].trim())))
+      )
+    }
+
+    // Filter by collections
+    if (filters.collections?.length) {
+      const collTags = filters.collections.map(c => COLLECTION_TAG_MAP[c]).filter(Boolean)
+      filtered = filtered.filter(n =>
+        collTags.some(tag => n.style_tags?.some(t => t.toLowerCase().includes(tag.toLowerCase())))
       )
     }
 

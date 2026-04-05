@@ -13,6 +13,7 @@ function generateCode() {
 export default function Setup({ session, onCouple }) {
   const [mode, setMode]         = useState(null)
   const [code, setCode]         = useState('')
+  const [coupleDbId, setCoupleDbId] = useState(null)
   const [joinCode, setJoinCode] = useState('')
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
@@ -20,15 +21,27 @@ export default function Setup({ session, onCouple }) {
 
   useEffect(() => {
     async function checkExisting() {
-      const { data } = await supabase
+      const uid = session.user.id
+      // Check if already in an active couple
+      const { data: active } = await supabase
         .from('couples')
-        .select('id, invite_code, status')
-        .eq('user_a_id', session.user.id)
+        .select('id, invite_code')
+        .or(`user_a_id.eq.${uid},user_b_id.eq.${uid}`)
+        .eq('status', 'active')
         .single()
-      if (data) {
-        setCode(data.invite_code)
-        if (data.status === 'active') onCouple(data.id)
-        else setMode('created')
+      if (active) { onCouple(active.id); return }
+
+      // Check if has a pending couple (created but partner hasn't joined)
+      const { data: pending } = await supabase
+        .from('couples')
+        .select('id, invite_code')
+        .eq('user_a_id', uid)
+        .eq('status', 'pending')
+        .single()
+      if (pending) {
+        setCode(pending.invite_code)
+        setCoupleDbId(pending.id)
+        setMode('created')
       }
     }
     checkExisting()
@@ -38,12 +51,15 @@ export default function Setup({ session, onCouple }) {
     setLoading(true)
     setError('')
     const newCode = generateCode()
-    setCode(newCode)
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('couples')
       .insert({ user_a_id: session.user.id, invite_code: newCode, status: 'pending' })
-    if (error) setError('Error creando la pareja.')
-    else setMode('created')
+      .select('id')
+      .single()
+    if (error) { setError('Error creando la pareja.'); setLoading(false); return }
+    setCode(newCode)
+    setCoupleDbId(data.id)
+    setMode('created')
     setLoading(false)
   }
 
@@ -66,22 +82,18 @@ export default function Setup({ session, onCouple }) {
       .from('couples')
       .update({ user_b_id: session.user.id, status: 'active' })
       .eq('id', couple.id)
-    if (joinError) setError('Error al unirse.')
-    else onCouple(couple.id)
+    if (joinError) { setError('Error al unirse.'); setLoading(false); return }
+
+    // Also activate the original user's couple if they had one pending
+    onCouple(couple.id)
     setLoading(false)
   }
 
-  async function handleContinueSolo() {
-    const { data } = await supabase
-      .from('couples')
-      .select('id')
-      .eq('user_a_id', session.user.id)
-      .eq('status', 'pending')
-      .single()
-    if (data) {
-      await supabase.from('couples').update({ status: 'active' }).eq('id', data.id)
-      onCouple(data.id)
-    }
+  // Continue solo: DON'T change status to active
+  // Just pass the couple_id so user can start swiping
+  // Partner can still join later with the code
+  function handleContinueSolo() {
+    if (coupleDbId) onCouple(coupleDbId)
   }
 
   function copyCode() {
@@ -92,13 +104,8 @@ export default function Setup({ session, onCouple }) {
 
   function shareCode() {
     if (navigator.share) {
-      navigator.share({
-        title: 'BabyMatch',
-        text: `Únete a mi pareja en BabyMatch con el código: ${code}\n\nhttps://babymatch.vercel.app`,
-      })
-    } else {
-      copyCode()
-    }
+      navigator.share({ title:'BabyMatch', text:`Únete a mi pareja en BabyMatch con el código: ${code}\n\nhttps://babymatch.vercel.app` })
+    } else copyCode()
   }
 
   const wrap = {
@@ -112,7 +119,7 @@ export default function Setup({ session, onCouple }) {
     <div style={wrap}>
       {!mode && (
         <>
-          <div style={{ fontSize: 52, marginBottom: 16 }}>👫</div>
+          <div style={{ fontSize:52, marginBottom:16 }}>👫</div>
           <div style={{ fontFamily:"'Poppins',system-ui", fontSize:22, fontWeight:700, color:'#1A0E0E', marginBottom:8 }}>Conecta con tu pareja</div>
           <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#5A4040', lineHeight:1.6, marginBottom:24 }}>
             Crea un código para que tu pareja se una,<br/>o introduce el código que te han compartido.
@@ -126,24 +133,15 @@ export default function Setup({ session, onCouple }) {
 
       {mode === 'created' && (
         <>
-          <div style={{ fontSize: 52, marginBottom: 16 }}>🔗</div>
+          <div style={{ fontSize:52, marginBottom:16 }}>🔗</div>
           <div style={{ fontFamily:"'Poppins',system-ui", fontSize:22, fontWeight:700, color:'#1A0E0E', marginBottom:8 }}>Tu código de pareja</div>
           <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#5A4040', lineHeight:1.6, marginBottom:20 }}>
-            Compártelo con tu pareja para conectaros.<br/>No tiene fecha de expiración.
+            Compártelo con tu pareja para conectaros.<br/>El código no tiene fecha de expiración.
           </div>
-          <div onClick={copyCode} style={{
-            background:'#fff', borderRadius:18, padding:'20px 24px',
-            border:'1.5px dashed #D08080', width:'100%', cursor:'pointer', marginBottom:16,
-          }}>
-            <div style={{ fontFamily:"'Inter',system-ui", fontSize:10, fontWeight:700, color:'#9A7070', textTransform:'uppercase', letterSpacing:'1.2px', marginBottom:10 }}>
-              Tu código
-            </div>
-            <div style={{ fontFamily:"'Poppins',system-ui", fontSize:32, fontWeight:700, color:'#8B2020', letterSpacing:6 }}>
-              {code}
-            </div>
-            <div style={{ fontFamily:"'Inter',system-ui", fontSize:11, color:'#9A7070', marginTop:8 }}>
-              {copied ? '¡Copiado! 👍' : 'Toca para copiar'}
-            </div>
+          <div onClick={copyCode} style={{ background:'#fff', borderRadius:18, padding:'20px 24px', border:'1.5px dashed #D08080', width:'100%', cursor:'pointer', marginBottom:16 }}>
+            <div style={{ fontFamily:"'Inter',system-ui", fontSize:10, fontWeight:700, color:'#9A7070', textTransform:'uppercase', letterSpacing:'1.2px', marginBottom:10 }}>Tu código</div>
+            <div style={{ fontFamily:"'Poppins',system-ui", fontSize:32, fontWeight:700, color:'#8B2020', letterSpacing:6 }}>{code}</div>
+            <div style={{ fontFamily:"'Inter',system-ui", fontSize:11, color:'#9A7070', marginTop:8 }}>{copied ? '¡Copiado! 👍' : 'Toca para copiar'}</div>
           </div>
           <button className="btn-primary" onClick={shareCode}>📤 Compartir con mi pareja</button>
           <button className="btn-secondary" onClick={handleContinueSolo}>Empezar solo por ahora</button>
@@ -155,11 +153,9 @@ export default function Setup({ session, onCouple }) {
 
       {mode === 'join' && (
         <>
-          <div style={{ fontSize: 52, marginBottom: 16 }}>🔑</div>
+          <div style={{ fontSize:52, marginBottom:16 }}>🔑</div>
           <div style={{ fontFamily:"'Poppins',system-ui", fontSize:22, fontWeight:700, color:'#1A0E0E', marginBottom:8 }}>Introduce el código</div>
-          <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#5A4040', marginBottom:24 }}>
-            Pide a tu pareja que te comparta su código
-          </div>
+          <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#5A4040', marginBottom:24 }}>Pide a tu pareja que te comparta su código</div>
           <input
             className="input-field"
             type="text"
