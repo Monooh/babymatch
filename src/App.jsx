@@ -95,8 +95,13 @@ export default function App() {
 
       {/* Top bar */}
       <div style={{ flexShrink:0, position:'sticky', top:0, zIndex:20, background:'#fff', borderBottom:'1px solid #EDEBE9', paddingTop:'calc(10px + env(safe-area-inset-top))', paddingBottom:'10px', paddingLeft:'20px', paddingRight:'20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-        <div style={{ fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:700,color:'#1A0E0E' }}>
-          Baby<span style={{ color:'#8B2020' }}>Match</span>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ width:32, height:32, borderRadius:9, background:'#fff', boxShadow:'0 2px 8px rgba(124,45,43,.15)', overflow:'hidden', padding:2, flexShrink:0 }}>
+            <img src="/logo.png" alt="logo" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
+          </div>
+          <div style={{ fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:700,color:'#1A0E0E' }}>
+            Baby<span style={{ color:'#8B2020' }}>Match</span>
+          </div>
         </div>
         <div style={{ position:'relative' }}>
           <button onClick={()=>setShowMenu(m=>!m)} style={{ background:'none',border:'none',cursor:'pointer',padding:4,display:'flex',alignItems:'center' }}>
