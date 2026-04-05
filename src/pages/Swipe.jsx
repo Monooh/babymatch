@@ -207,7 +207,7 @@ export default function Swipe({ session, coupleId, filters }) {
   const remaining = names.length - index
   const nameLen   = current?.name?.length || 0
   // Bigger font for short names, scales down for long ones
-  const fontSize  = nameLen <= 4 ? 72 : nameLen <= 6 ? 62 : nameLen <= 8 ? 52 : nameLen <= 10 ? 42 : nameLen <= 12 ? 34 : 28
+  const fontSize  = nameLen <= 4 ? 85 : nameLen <= 5 ? 75 : nameLen <= 6 ? 65 : nameLen <= 8 ? 54 : nameLen <= 10 ? 44 : nameLen <= 12 ? 36 : 29
 
   return (
     <>
@@ -253,43 +253,50 @@ export default function Swipe({ session, coupleId, filters }) {
             <div style={{ position:'absolute',top:22,right:18,padding:'6px 16px',borderRadius:10,fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:800,border:'3px solid #145030',color:'#145030',transform:'rotate(12deg)',opacity:likeOp,pointerEvents:'none',letterSpacing:1 }}>LIKE</div>
             <div style={{ position:'absolute',top:22,left:18,padding:'6px 16px',borderRadius:10,fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:800,border:'3px solid #7C2020',color:'#7C2020',transform:'rotate(-12deg)',opacity:nopeOp,pointerEvents:'none',letterSpacing:1 }}>NOPE</div>
 
-            {/* Main content — vertically centered with generous spacing */}
-            <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px 24px', textAlign:'center', gap:0 }}>
+            {/* Main content */}
+            <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'28px 24px', textAlign:'center' }}>
 
               {/* Badge */}
-              <div style={{ marginBottom:20 }}>
+              <div style={{ marginBottom:22 }}>
                 <GenderBadge gender={current.gender} />
               </div>
 
-              {/* Name — big and bold */}
-              <div style={{ fontFamily:"'Poppins',system-ui", fontSize:fontSize, fontWeight:700, color:'#1A0E0E', lineHeight:1, marginBottom:16, letterSpacing: fontSize > 50 ? -2 : fontSize > 35 ? -1 : -0.3, wordBreak:'break-word', maxWidth:'100%' }}>
+              {/* Name */}
+              <div style={{ fontFamily:"'Poppins',system-ui", fontSize:fontSize, fontWeight:700, color:'#1A0E0E', lineHeight:1, marginBottom:14, letterSpacing: fontSize > 70 ? -3 : fontSize > 50 ? -2 : fontSize > 35 ? -1 : -0.3, wordBreak:'break-word', maxWidth:'100%' }}>
                 {current.name}
               </div>
 
-              {/* Origin */}
-              <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#8B2020', fontWeight:700, letterSpacing:.5, marginBottom:20, textTransform:'uppercase', fontSize:11 }}>
-                {current.origin}
+              {/* Origin with decorative dots */}
+              <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:22 }}>
+                <div style={{ width:4, height:4, borderRadius:'50%', background:'#D4A0A0', flexShrink:0 }} />
+                <div style={{ fontFamily:"'Inter',system-ui", fontSize:11, color:'#8B2020', fontWeight:700, letterSpacing:1.5, textTransform:'uppercase' }}>
+                  {current.origin}
+                </div>
+                <div style={{ width:4, height:4, borderRadius:'50%', background:'#D4A0A0', flexShrink:0 }} />
               </div>
 
-              {/* Divider */}
-              <div style={{ width:40, height:2, background:'#F0EEEC', borderRadius:1, marginBottom:20 }} />
-
-              {/* Meaning */}
-              <div style={{ fontFamily:"'Inter',system-ui", fontSize:14, color:'#5A4040', lineHeight:1.65, maxWidth:280 }}>
+              {/* Meaning — italic */}
+              <div style={{ fontFamily:"'Inter',system-ui", fontSize:14, color:'#6A5050', lineHeight:1.7, maxWidth:285, fontStyle:'italic' }}>
                 {current.meaning}
               </div>
             </div>
 
-            {/* Stats bar — inside the card at the bottom */}
-            <div style={{ borderTop:'1px solid #F5F2F0', padding:'14px 24px', display:'flex', justifyContent:'center', gap:28, background:'#FDFCFC' }}>
-              <div style={{ display:'flex',alignItems:'center',gap:8,fontFamily:"'Inter',system-ui",fontSize:12,color:'#A09090' }}>
-                <span>Popularidad</span>
-                <div style={{ width:52,height:3,background:'#EDEBE9',borderRadius:2,overflow:'hidden' }}>
-                  <div style={{ height:'100%',background:'#C88080',borderRadius:2,width:`${current.popularity}%` }} />
+            {/* Stats bar inside card */}
+            <div style={{ borderTop:'1px solid #F0EEEC', padding:'12px 24px', display:'flex', justifyContent:'center', alignItems:'center', gap:20, background:'#FDFBFB' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:6, fontFamily:"'Inter',system-ui", fontSize:11, color:'#B0A0A0' }}>
+                <span>Pop.</span>
+                <div style={{ display:'flex', gap:3 }}>
+                  {[20,40,60,80,100].map(t => (
+                    <div key={t} style={{ width:6, height:6, borderRadius:'50%', background: current.popularity >= t ? '#C88080' : '#E8E4E4' }} />
+                  ))}
                 </div>
               </div>
-              <div style={{ fontFamily:"'Inter',system-ui",fontSize:12,color:'#A09090' }}>
-                {current.syllables} {current.syllables===1?'sílaba':'sílabas'}
+              <div style={{ width:1, height:12, background:'#E8E4E4' }} />
+              <div style={{ display:'flex', alignItems:'center', gap:4, fontFamily:"'Inter',system-ui", fontSize:11, color:'#B0A0A0' }}>
+                {Array.from({length: Math.min(current.syllables, 5)}).map((_,i) => (
+                  <div key={i} style={{ width:6, height:6, borderRadius:'50%', background:'#A0B8C8' }} />
+                ))}
+                <span style={{ marginLeft:2 }}>{current.syllables} {current.syllables===1?'síl.':'síls.'}</span>
               </div>
             </div>
           </div>
