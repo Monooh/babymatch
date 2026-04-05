@@ -72,7 +72,7 @@ export default function App() {
   }
   function copyCode() { navigator.clipboard.writeText(coupleCode); setShowMenu(false) }
   function shareCode() {
-    if (navigator.share) navigator.share({ title:'BabyMatch', text:`Únete con el código: ${coupleCode}\n\nhttps://babymatch.vercel.app` })
+    if (navigator.share) navigator.share({ title:'The Name', text:`Únete con el código: ${coupleCode}\n\nhttps://the-name.vercel.app` })
     else copyCode()
     setShowMenu(false)
   }
@@ -100,7 +100,7 @@ export default function App() {
             <img src="/logo.png" alt="logo" style={{ width:'100%', height:'100%', objectFit:'contain' }} />
           </div>
           <div style={{ fontFamily:"'Poppins',system-ui",fontSize:16,fontWeight:700,color:'#1A0E0E' }}>
-            Baby<span style={{ color:'#8B2020' }}>Match</span>
+            The <span style={{ color:'#8B2020' }}>Name</span>
           </div>
         </div>
         <div style={{ position:'relative' }}>

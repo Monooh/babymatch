@@ -105,7 +105,7 @@ export default function Setup({ session, onCouple }) {
 
   function shareCode() {
     if (navigator.share) {
-      navigator.share({ title:'BabyMatch', text:`Únete a mi pareja en BabyMatch con el código: ${code}\n\nhttps://babymatch.vercel.app` })
+      navigator.share({ title:'The Name', text:`Únete a mi pareja en The Name con el código: ${code}\n\nhttps://the-name.vercel.app` })
     } else copyCode()
   }
 

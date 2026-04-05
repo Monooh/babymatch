@@ -1,7 +1,7 @@
 {
-  "name": "BabyMatch",
-  "short_name": "BabyMatch",
-  "description": "Encontrad el nombre perfecto para vuestro bebé juntos",
+  "name": "The Name",
+  "short_name": "The Name",
+  "description": "Encontrad el nombre perfecto para vuestro beb\u00e9",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFF4F1",

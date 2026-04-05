@@ -257,17 +257,17 @@ export default function Swipe({ session, coupleId, filters }) {
             <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'28px 24px', textAlign:'center' }}>
 
               {/* Badge */}
-              <div style={{ marginBottom:22 }}>
+              <div style={{ marginBottom:28 }}>
                 <GenderBadge gender={current.gender} />
               </div>
 
               {/* Name */}
-              <div style={{ fontFamily:"'Poppins',system-ui", fontSize:fontSize, fontWeight:700, color:'#1A0E0E', lineHeight:1, marginBottom:14, letterSpacing: fontSize > 70 ? -3 : fontSize > 50 ? -2 : fontSize > 35 ? -1 : -0.3, wordBreak:'break-word', maxWidth:'100%' }}>
+              <div style={{ fontFamily:"'Poppins',system-ui", fontSize:fontSize, fontWeight:700, color:'#1A0E0E', lineHeight:1, marginBottom:24, letterSpacing: fontSize > 70 ? -3 : fontSize > 50 ? -2 : fontSize > 35 ? -1 : -0.3, wordBreak:'break-word', maxWidth:'100%' }}>
                 {current.name}
               </div>
 
               {/* Origin with decorative dots */}
-              <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:22 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:28 }}>
                 <div style={{ width:4, height:4, borderRadius:'50%', background:'#D4A0A0', flexShrink:0 }} />
                 <div style={{ fontFamily:"'Inter',system-ui", fontSize:11, color:'#8B2020', fontWeight:700, letterSpacing:1.5, textTransform:'uppercase' }}>
                   {current.origin}
@@ -275,16 +275,16 @@ export default function Swipe({ session, coupleId, filters }) {
                 <div style={{ width:4, height:4, borderRadius:'50%', background:'#D4A0A0', flexShrink:0 }} />
               </div>
 
-              {/* Meaning — italic */}
-              <div style={{ fontFamily:"'Inter',system-ui", fontSize:14, color:'#6A5050', lineHeight:1.7, maxWidth:285, fontStyle:'italic' }}>
+              {/* Meaning */}
+              <div style={{ fontFamily:"'Inter',system-ui", fontSize:14, color:'#6A5050', lineHeight:1.75, maxWidth:285, fontStyle:'italic' }}>
                 {current.meaning}
               </div>
             </div>
 
             {/* Stats bar inside card */}
-            <div style={{ borderTop:'1px solid #F0EEEC', padding:'12px 24px', display:'flex', justifyContent:'center', alignItems:'center', gap:20, background:'#FDFBFB' }}>
+            <div style={{ borderTop:'1px solid #F0EEEC', padding:'14px 24px', display:'flex', justifyContent:'center', alignItems:'center', gap:20, background:'#FDFBFB' }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontFamily:"'Inter',system-ui", fontSize:11, color:'#B0A0A0' }}>
-                <span>Pop.</span>
+                <span>Popular</span>
                 <div style={{ display:'flex', gap:3 }}>
                   {[20,40,60,80,100].map(t => (
                     <div key={t} style={{ width:6, height:6, borderRadius:'50%', background: current.popularity >= t ? '#C88080' : '#E8E4E4' }} />
@@ -296,7 +296,7 @@ export default function Swipe({ session, coupleId, filters }) {
                 {Array.from({length: Math.min(current.syllables, 5)}).map((_,i) => (
                   <div key={i} style={{ width:6, height:6, borderRadius:'50%', background:'#A0B8C8' }} />
                 ))}
-                <span style={{ marginLeft:2 }}>{current.syllables} {current.syllables===1?'síl.':'síls.'}</span>
+                <span style={{ marginLeft:2 }}>{current.syllables} {current.syllables===1?'Sílaba':'Sílabas'}</span>
               </div>
             </div>
           </div>

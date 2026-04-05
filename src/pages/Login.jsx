@@ -46,7 +46,7 @@ export default function Login() {
       </div>
 
       <div style={{ fontFamily:"'Poppins',system-ui", fontSize:28, fontWeight:700, color:'#1A0E0E', letterSpacing:-.5, marginBottom:6 }}>
-        Baby<span style={{ color:'#8B2020' }}>Match</span>
+        The <span style={{ color:'#8B2020' }}>Name</span>
       </div>
       <div style={{ fontFamily:"'Inter',system-ui", fontSize:13, color:'#5A4040', marginBottom:36 }}>
         Encontrad el nombre perfecto juntos
