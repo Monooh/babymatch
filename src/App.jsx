@@ -45,7 +45,7 @@ export default function App() {
   const [coupleCode, setCoupleCode] = useState('')
   const [page, setPage]             = useState('swipe')
   const [showMenu, setShowMenu]     = useState(false)
-  const [filters, setFilters]       = useState({ gender:[], origin:[], style:[], popularity:[] })
+  const [filters, setFilters] = useState({ gender:[], origin:[], style:[], popularity:[], collections:[], syllables:[], startLetter:'' })
   const [loading, setLoading]       = useState(true)
 
   useEffect(() => {
